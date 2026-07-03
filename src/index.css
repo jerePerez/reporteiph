@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+.header-gradient {
+  background: linear-gradient(90deg, #00647f 0%, #1481a2 100%);
+}
+
+.card-accent-success {
+  border-left: 4px solid #2e7d32;
+}
+.card-accent-pending {
+  border-left: 4px solid #0288d1;
+}
+.card-accent-warning {
+  border-left: 4px solid #f57c00;
+}
+
+.toggle-state:checked + .toggle-label {
+  background-color: #2e7d32;
+  color: white;
+}
+.toggle-state:not(:checked) + .toggle-label {
+  background-color: #eceeed;
+  color: #3f484d;
+}

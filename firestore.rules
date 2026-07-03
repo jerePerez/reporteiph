@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Cualquiera puede leer las máquinas (para armar el checklist en planta)
+    // pero solo un admin logueado puede crear/editar/borrar máquinas.
+    match /machines/{machineId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    // Cualquiera puede crear un reporte (los técnicos no tienen login),
+    // pero solo un admin logueado puede modificarlos o borrarlos.
+    match /reports/{reportId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if request.auth != null;
+    }
+  }
+}
