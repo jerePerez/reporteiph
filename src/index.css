@@ -14,18 +14,43 @@
 .card-accent-success {
   border-left: 4px solid #2e7d32;
 }
+
 .card-accent-pending {
   border-left: 4px solid #0288d1;
 }
+
 .card-accent-warning {
   border-left: 4px solid #f57c00;
 }
 
-.toggle-state:checked + .toggle-label {
+.toggle-state:checked+.toggle-label {
   background-color: #2e7d32;
   color: white;
 }
-.toggle-state:not(:checked) + .toggle-label {
+
+.toggle-state:not(:checked)+.toggle-label {
   background-color: #eceeed;
   color: #3f484d;
+}
+
+/* Loader IPH */
+.iph-loader-dot {
+  opacity: 0.15;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: iphDotFade 1.4s ease-in-out infinite;
+}
+
+@keyframes iphDotFade {
+
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.85);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
 }

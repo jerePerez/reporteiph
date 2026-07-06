@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import { generateReportPDF } from '../utils/pdfGenerator'
+import Loader from '../components/Loader'
 
 export default function ReportDetail() {
   const { id } = useParams()
@@ -10,14 +11,14 @@ export default function ReportDetail() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const snap = await getDoc(doc(db, 'reports', id))
       if (snap.exists()) setReport({ id: snap.id, ...snap.data() })
       setLoading(false)
     })()
   }, [id])
 
-  if (loading) return <div className="p-8 text-center text-on-surface-variant">Cargando reporte...</div>
+  if (loading) return <Loader label="Cargando reporte..." />
   if (!report)
     return (
       <p className="text-on-surface-variant">
@@ -35,7 +36,7 @@ export default function ReportDetail() {
           <h2 className="text-headline-lg font-headline-lg text-on-surface">
             Reporte del {new Date(report.date).toLocaleString('es-AR')}
           </h2>
-          <p className="text-body-md text-on-surface-variant">Técnico: {report.technician}</p>
+          <p className="text-body-md text-on-surface-variant">Supervisor: {report.technician}</p>
         </div>
         <button
           onClick={() => generateReportPDF(report)}
@@ -48,20 +49,18 @@ export default function ReportDetail() {
         {report.sectors?.map((sector) => (
           <div
             key={sector.machineId}
-            className={`bg-surface border border-outline-variant rounded-lg p-6 ${
-              sector.status === 'OK' ? 'card-accent-success' : 'card-accent-pending'
-            }`}
+            className={`bg-surface border border-outline-variant rounded-lg p-6 ${sector.status === 'OK' ? 'card-accent-success' : 'card-accent-pending'
+              }`}
           >
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-headline-md font-headline-md text-primary">{sector.machineName}</h3>
               <span
-                className={`text-label-sm font-label-sm px-3 py-1 rounded-full ${
-                  sector.status === 'OK'
-                    ? 'bg-status-success/10 text-status-success border border-status-success'
-                    : 'bg-primary-fixed text-on-primary-fixed'
-                }`}
+                className={`text-label-sm font-label-sm px-3 py-1 rounded-full ${sector.status === 'OK'
+                  ? 'bg-status-success/10 text-status-success border border-status-success'
+                  : 'bg-primary-fixed text-on-primary-fixed'
+                  }`}
               >
-                {sector.status === 'OK' ? 'INSPECTION OK' : 'INSPECTION PENDING'}
+                {sector.status === 'OK' ? 'INSPECCIÓN OK' : 'INSPECCIÓN INCOMPLETA'}
               </span>
             </div>
             <ul className="space-y-2 mb-4">

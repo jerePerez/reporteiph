@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
+import { useParams, Link } from 'react-router-dom'
 import { collection, getDocs, addDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase'
 import MachineCard from '../components/MachineCard'
 import { generateReportPDF } from '../utils/pdfGenerator'
 import { sendReportEmail } from '../utils/formspree'
+import Loader from '../components/Loader'
 
 export default function Dashboard() {
-  const [machines, setMachines] = useState([])
+  const { grid } = useParams()
+  const [allMachines, setAllMachines] = useState([])
   const [loading, setLoading] = useState(true)
   const [sessionData, setSessionData] = useState({})
   const [technician, setTechnician] = useState('')
@@ -20,9 +23,13 @@ export default function Dashboard() {
   async function loadMachines() {
     setLoading(true)
     const snap = await getDocs(collection(db, 'machines'))
-    setMachines(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
+    const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+    list.sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+    setAllMachines(list)
     setLoading(false)
   }
+
+  const machines = allMachines.filter((m) => String(m.grid) === String(grid))
 
   function handleToggle(machineId, itemId) {
     setSessionData((prev) => {
@@ -63,6 +70,7 @@ export default function Dashboard() {
     })
     return {
       technician: technician || 'Sin especificar',
+      grid,
       date: new Date().toISOString(),
       sectors,
     }
@@ -108,16 +116,23 @@ export default function Dashboard() {
   }
 
   if (loading) {
-    return <div className="p-8 text-center text-on-surface-variant">Cargando máquinas...</div>
+    return <Loader label="Cargando máquinas..." />
   }
 
   return (
     <section>
+      <div className="mb-4">
+        <Link to="/" className="text-label-sm font-label-md text-primary hover:underline inline-flex items-center gap-1">
+          <span className="material-symbols-outlined text-base">arrow_back</span>
+          Cambiar cuadrícula
+        </Link>
+      </div>
+
       <header className="mb-8 flex flex-col md:flex-row justify-between md:items-end gap-4">
         <div>
-          <h2 className="text-headline-lg font-headline-lg text-on-surface">Inspección de Turno</h2>
+          <h2 className="text-headline-lg font-headline-lg text-on-surface">Inspección de Turno — Cuadrícula {grid}</h2>
           <p className="text-body-md text-on-surface-variant">
-            Complete el listado de verificación para asegurar el apagado.
+            Completá el listado de verificación.
           </p>
         </div>
         <input
@@ -131,7 +146,7 @@ export default function Dashboard() {
 
       {machines.length === 0 ? (
         <p className="text-on-surface-variant">
-          No hay máquinas cargadas. Ingresá al módulo Administrador para agregar la primera.
+          No hay máquinas cargadas en esta cuadrícula. Ingresá al módulo Administrador para asignarlas.
         </p>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

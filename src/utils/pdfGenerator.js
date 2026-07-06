@@ -6,7 +6,7 @@ export function generateReportPDF(report) {
   const dateStr = new Date(report.date).toLocaleString('es-AR')
 
   docPdf.setFontSize(18)
-  docPdf.text('TechInspect Pro - Reporte de Inspección', 14, 18)
+  docPdf.text('IPH CERO - Reporte de Inspección', 14, 18)
   docPdf.setFontSize(11)
   docPdf.text(`Fecha: ${dateStr}`, 14, 26)
   docPdf.text(`Técnico: ${report.technician}`, 14, 32)

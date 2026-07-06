@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase'
+import Loader from '../components/Loader'
 
 const emptyItem = () => ({ id: crypto.randomUUID(), label: '', icon: 'check_circle' })
 
@@ -16,16 +17,24 @@ export default function AdminPanel() {
   async function loadMachines() {
     setLoading(true)
     const snap = await getDocs(collection(db, 'machines'))
-    setMachines(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
+    const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+    list.sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+    setMachines(list)
     setLoading(false)
   }
 
   function startNew() {
-    setEditing({ name: '', sector: '', items: [emptyItem()] })
+    const nextOrder = machines.length > 0 ? Math.max(...machines.map((m) => m.order ?? 0)) + 1 : 1
+    setEditing({ name: '', sector: '', order: nextOrder, grid: '', items: [emptyItem()] })
   }
 
   function startEdit(machine) {
-    setEditing({ ...machine, items: (machine.items || []).map((i) => ({ ...i })) })
+    setEditing({
+      ...machine,
+      order: machine.order ?? 0,
+      grid: machine.grid ?? '',
+      items: (machine.items || []).map((i) => ({ ...i })),
+    })
   }
 
   async function handleDelete(id) {
@@ -39,9 +48,15 @@ export default function AdminPanel() {
       alert('El nombre de la máquina es obligatorio.')
       return
     }
+    if (!editing.grid) {
+      alert('Elegí a qué cuadrícula pertenece esta máquina (1 o 3).')
+      return
+    }
     const payload = {
       name: editing.name.trim(),
       sector: editing.sector?.trim() || '',
+      order: Number(editing.order) || 0,
+      grid: editing.grid,
       items: editing.items
         .filter((i) => i.label.trim())
         .map((i) => ({ id: i.id, label: i.label.trim(), icon: i.icon || 'check_circle' })),
@@ -71,7 +86,7 @@ export default function AdminPanel() {
     setEditing((prev) => ({ ...prev, items: prev.items.filter((_, i) => i !== idx) }))
   }
 
-  if (loading) return <div className="p-8 text-center text-on-surface-variant">Cargando...</div>
+  if (loading) return <Loader label="Cargando máquinas..." />
 
   return (
     <section>
@@ -89,7 +104,7 @@ export default function AdminPanel() {
 
       {editing ? (
         <div className="bg-surface border border-outline-variant rounded-lg p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
               <label className="text-label-sm font-label-md text-on-surface-variant block mb-2">
                 Nombre / Sector (ej: Sector PL01)
@@ -109,6 +124,38 @@ export default function AdminPanel() {
                 onChange={(e) => setEditing({ ...editing, sector: e.target.value })}
                 className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-primary"
               />
+            </div>
+            <div>
+              <label className="text-label-sm font-label-md text-on-surface-variant block mb-2">
+                Orden (menor número = aparece primero)
+              </label>
+              <input
+                type="number"
+                value={editing.order}
+                onChange={(e) => setEditing({ ...editing, order: e.target.value })}
+                className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <label className="text-label-sm font-label-md text-on-surface-variant block mb-2">
+              Cuadrícula a la que pertenece
+            </label>
+            <div className="flex gap-3">
+              {['1', '3'].map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => setEditing({ ...editing, grid: g })}
+                  className={`w-16 h-12 rounded-lg font-label-md text-headline-md border-2 transition-all ${editing.grid === g
+                    ? 'bg-primary text-on-primary border-primary'
+                    : 'bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-primary'
+                    }`}
+                >
+                  {g}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -159,7 +206,15 @@ export default function AdminPanel() {
             <div key={machine.id} className="bg-surface border border-outline-variant rounded-lg p-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-headline-md font-headline-md text-primary">{machine.name}</h3>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">
+                      #{machine.order ?? '-'}
+                    </span>
+                    <span className="text-label-sm font-label-sm text-primary bg-primary-fixed px-2 py-0.5 rounded">
+                      Cuadrícula {machine.grid || 'sin asignar'}
+                    </span>
+                    <h3 className="text-headline-md font-headline-md text-primary w-full mt-1">{machine.name}</h3>
+                  </div>
                   {machine.sector && <p className="text-label-sm text-on-surface-variant">{machine.sector}</p>}
                 </div>
                 <div className="flex gap-2">

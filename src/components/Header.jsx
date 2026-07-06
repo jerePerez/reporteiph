@@ -31,7 +31,7 @@ export default function Header() {
       <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-max-width mx-auto">
         <div className="flex flex-col">
           <Link to="/" onClick={closeMenu} className="flex items-center">
-            <img src={logo} alt="TechInspect Pro" className="h-14 md:h-16 w-auto object-contain" />
+            <img src={logo} alt="IPH CERO" className="h-14 md:h-16 w-auto object-contain" />
           </Link>
           <span className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
             {now.toLocaleString('es-AR', {
@@ -47,7 +47,7 @@ export default function Header() {
         {/* Links de navegación: visibles siempre a partir de md */}
         <nav className="hidden md:flex items-center gap-8">
           <Link to="/" className="text-on-surface-variant hover:text-primary transition-colors font-label-md">
-            Dashboard
+            Inicio
           </Link>
           <Link to="/reportes" className="text-on-surface-variant hover:text-primary transition-colors font-label-md">
             Reportes
@@ -97,7 +97,7 @@ export default function Header() {
             onClick={closeMenu}
             className="text-on-surface px-3 py-3 rounded-lg hover:bg-surface-container transition-colors font-label-md"
           >
-            Dashboard
+            Inicio
           </Link>
           <Link
             to="/reportes"

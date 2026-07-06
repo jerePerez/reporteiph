@@ -55,7 +55,7 @@ export default function MachineCard({ machine, state, onToggle, onComment }) {
           <label className="text-label-sm font-label-md text-on-surface-variant block mb-2">Comentarios</label>
           <textarea
             className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-body-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none"
-            placeholder="Ingrese observaciones..."
+            placeholder="Ingresá observaciones..."
             rows="3"
             value={state?.comments || ''}
             onChange={(e) => onComment(machine.id, e.target.value)}

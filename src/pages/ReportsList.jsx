@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react'
 import { collection, getDocs, query, orderBy } from 'firebase/firestore'
 import { db } from '../firebase'
 import { Link } from 'react-router-dom'
+import Loader from '../components/Loader'
 
 export default function ReportsList() {
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const q = query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
       const snap = await getDocs(q)
       setReports(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
@@ -16,7 +17,7 @@ export default function ReportsList() {
     })()
   }, [])
 
-  if (loading) return <div className="p-8 text-center text-on-surface-variant">Cargando reportes...</div>
+  if (loading) return <Loader label="Cargando reportes..." />
 
   return (
     <section>
@@ -38,15 +39,14 @@ export default function ReportsList() {
                     {new Date(r.date).toLocaleString('es-AR')}
                   </p>
                   <p className="text-label-sm text-on-surface-variant">
-                    Técnico: {r.technician} · {r.sectors?.length || 0} sectores
+                    Supervisor: {r.technician} · {r.sectors?.length || 0} sectores
                   </p>
                 </div>
                 <span
-                  className={`text-label-sm font-label-sm px-3 py-1 rounded-full ${
-                    allOk
-                      ? 'bg-status-success/10 text-status-success border border-status-success'
-                      : 'bg-primary-fixed text-on-primary-fixed'
-                  }`}
+                  className={`text-label-sm font-label-sm px-3 py-1 rounded-full ${allOk
+                    ? 'bg-status-success/10 text-status-success border border-status-success'
+                    : 'bg-primary-fixed text-on-primary-fixed'
+                    }`}
                 >
                   {allOk ? 'OK' : 'CON PENDIENTES'}
                 </span>
