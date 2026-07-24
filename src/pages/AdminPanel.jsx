@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase'
 import Loader from '../components/Loader'
+import { Link } from 'react-router-dom'
 
 const emptyItem = () => ({ id: crypto.randomUUID(), label: '', icon: 'check_circle' })
 
@@ -90,8 +91,13 @@ export default function AdminPanel() {
 
   return (
     <section>
-      <header className="mb-8 flex justify-between items-center">
-        <h2 className="text-headline-lg font-headline-lg text-on-surface">Administrador de Máquinas</h2>
+      <header className="mb-8 flex justify-between items-center flex-wrap gap-3">
+        <div>
+          <h2 className="text-headline-lg font-headline-lg text-on-surface">Administrador de Máquinas</h2>
+          <Link to="/admin/graseras" className="text-label-sm text-primary hover:underline">
+            Ir al Administrador de Graseras →
+          </Link>
+        </div>
         {!editing && (
           <button
             onClick={startNew}

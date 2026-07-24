@@ -197,12 +197,12 @@ export default function Dashboard() {
               >
                 Descargar PDF
               </button>
-              <button
+              {/* <button
                 onClick={handleSendEmail}
                 className="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md hover:bg-primary-container transition-all"
               >
                 Enviar por email
-              </button>
+              </button> */}
             </div>
           )}
         </div>

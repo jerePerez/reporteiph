@@ -52,6 +52,9 @@ export default function Header() {
           <Link to="/reportes" className="text-on-surface-variant hover:text-primary transition-colors font-label-md">
             Reportes
           </Link>
+          <Link to="/graseras" className="text-on-surface-variant hover:text-primary transition-colors font-label-md">
+            Graseras
+          </Link>
           {user && (
             <Link to="/admin" className="text-on-surface-variant hover:text-primary transition-colors font-label-md">
               Administrador
@@ -105,6 +108,13 @@ export default function Header() {
             className="text-on-surface px-3 py-3 rounded-lg hover:bg-surface-container transition-colors font-label-md"
           >
             Reportes
+          </Link>
+          <Link
+            to="/graseras"
+            onClick={closeMenu}
+            className="text-on-surface px-3 py-3 rounded-lg hover:bg-surface-container transition-colors font-label-md"
+          >
+            Graseras
           </Link>
           {user && (
             <Link
